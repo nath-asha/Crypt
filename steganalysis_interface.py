@@ -3,7 +3,7 @@ from scipy import stats
 
 def analyze_lsb(image_path):
   """
-  Analyzes the least significant bit (LSB) of each pixel in a BMP image 
+  Analyzes the least significant bit (LSB) of each pixel in an image 
   and performs basic statistical tests.
 
   Args:
@@ -14,7 +14,11 @@ def analyze_lsb(image_path):
   """
   try:
     # Open the image
-    img = Image.open(image_path).convert("RGB")
+    img = Image.open(image_path)
+
+    # Convert to RGB mode if needed (LSB analysis works on RGB values)
+    if img.mode != 'RGB':
+        img = img.convert("RGB")
     width, height = img.size
 
     # Analyze each pixel
@@ -36,6 +40,7 @@ def analyze_lsb(image_path):
     expected_ones = total_bits / 2
     chi2, pval = stats.chisquare([one_count, zero_count])
 
+    # Print results
     print(f"Image: {image_path}")
     print(f"Number of 1s in LSBs: {one_count}")
     print(f"Number of 0s in LSBs: {zero_count}")
@@ -53,6 +58,15 @@ def analyze_lsb(image_path):
   except FileNotFoundError:
     print(f"Error: Image file not found: {image_path}")
 
-# Example usage
-image_path = "F:\crypto\Crypt\encoded_image.png"  # Replace with your image path
-analyze_lsb(image_path)
+def main():
+  """
+  Prompts user for image path and runs analysis.
+  """
+  while True:
+    image_path = input("Enter the image path (or 'q' to quit): ")
+    if image_path.lower() == 'q':
+      break
+    analyze_lsb(image_path)
+
+if __name__ == "__main__":
+  main()

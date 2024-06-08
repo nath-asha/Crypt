@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steganalysis Tool</title>
+</head>
+<body>
+  <h1>Steganalysis Tool</h1>
+  <form method="POST" enctype="multipart/form-data">
+    <label for="image_file">Select Image:</label>
+    <input type="file" id="image_file" name="image_file" accept="image/*">
+    <input type="submit" value="Analyze">
+  </form>
+
+  {% if results %}
+    <h2>Analysis Results</h2>
+    <p><b>Image:</b> {{ results.image }}</p>
+    <ul>
+      <li>Number of 1s in LSBs: {{ results.ones_count }}</li>
+      <li>Number of 0s in LSBs: {{ results.zeros_count }}</li>
+      <li>Expected number of 1s: {{ results.expected_ones }}</li>
+      <li>Chi-square statistic: {{ results.chi2:.4f }}</li>
+      <li>p-value: {{ results.pval:.4f }}</li>
+    </ul>
+    {% if results.error %}
+      <p style="color: red;">Error: {{ results.error }}</p>
+    {% else %}
+      <p><b>Interpretation:</b></p>
+      {% if results.pval < 0.05 %}
+        <p>- The distribution of 1s and 0s in LSBs significantly deviates from randomness, suggesting possible steganography.</p>
+      {% else %}
+        <p>- The LSB distribution appears close to random, but further analysis might be needed.</p>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+</body>
+</html>
